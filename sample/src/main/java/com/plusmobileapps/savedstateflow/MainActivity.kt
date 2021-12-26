@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.plusmobileapps.savedstateflow.ui.theme.SavedStateFlowTheme
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +31,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ExampleContent(viewModel)
+                    val state = viewModel.state.collectAsState()
+                    ExampleContent(state.value, viewModel::updateQuery)
                 }
             }
         }
@@ -40,25 +40,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ExampleContent(viewModel: MainViewModel) {
+fun ExampleContent(state: MainViewModel.State, onQueryChanged: (String) -> Unit) {
     Scaffold {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            QueryTextField(stateFlow = viewModel.query, onValueChanged = viewModel::queryUpdated)
-            LoadingUI(stateFlow = viewModel.isLoading)
-            NewsArticlesUI(stateFlow = viewModel.newsArticles)
+            QueryTextField(query = state.query, onValueChanged = onQueryChanged)
+            LoadingUI(state.isLoading)
+            NewsArticlesUI(state.results)
         }
     }
 }
 
 @Composable
-fun QueryTextField(stateFlow: StateFlow<String>, onValueChanged: (String) -> Unit) {
-    val state = stateFlow.collectAsState()
+fun QueryTextField(query: String, onValueChanged: (String) -> Unit) {
     OutlinedTextField(
         modifier = Modifier.padding(8.dp),
-        value = state.value,
+        value = query,
         label = { Text("Query") },
         onValueChange = onValueChanged
     )
@@ -66,21 +65,19 @@ fun QueryTextField(stateFlow: StateFlow<String>, onValueChanged: (String) -> Uni
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun LoadingUI(stateFlow: StateFlow<Boolean>) {
-    val state = stateFlow.collectAsState()
-    AnimatedVisibility(modifier = Modifier.padding(8.dp), visible = state.value) {
+fun LoadingUI(isLoading: Boolean) {
+    AnimatedVisibility(modifier = Modifier.padding(8.dp), visible = isLoading) {
         CircularProgressIndicator()
     }
 }
 
 @Composable
-fun NewsArticlesUI(stateFlow: StateFlow<List<String>>) {
-    val state = stateFlow.collectAsState()
+fun NewsArticlesUI(state: List<String>) {
     LazyColumn(modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp)) {
-        items(state.value.size) { index ->
-            val article = state.value[index]
+        items(state.size) { index ->
+            val article = state[index]
             Column {
                 Text(text = article)
                 Divider()
