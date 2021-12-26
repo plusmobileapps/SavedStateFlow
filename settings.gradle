@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Saved State Flow"
-include ':app'
+include ':sample'
 include ':savedstateflow'
