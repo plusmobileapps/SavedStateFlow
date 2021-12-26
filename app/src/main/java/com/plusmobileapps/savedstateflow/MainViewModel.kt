@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
+//    private val _query = MutableStateFlow<String>("") // Will not persist process death
     private val _query = SavedStateFlow(
         savedStateHandle = savedStateHandle,
         key = "main-viewmodel-query-key",
@@ -33,7 +34,7 @@ class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private fun observeQuery() {
         viewModelScope.launch {
-            query.flatMapLatest { NewsRepository.fetchQuery(it) }.collect {
+            query.flatMapLatest(NewsRepository::fetchQuery).collect {
                 _newsArticles.value = it
                 _isLoading.value = false
             }
