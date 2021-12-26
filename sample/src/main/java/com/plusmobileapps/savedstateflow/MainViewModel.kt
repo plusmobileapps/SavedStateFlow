@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    //    private val _query = MutableStateFlow<String>("") // Will not persist process death
+    //    private val query = MutableStateFlow<String>("") // Will not persist process death
     private val query = SavedStateFlow(
         savedStateHandle = savedStateHandle,
         key = "main-viewmodel-query-key",
@@ -56,7 +56,10 @@ class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 object NewsRepository {
     fun fetchQuery(query: String): Flow<List<String>> = flow {
         delay(2000L)
-        if (query.isEmpty()) return@flow
+        if (query.isEmpty()) {
+            emit(emptyList())
+            return@flow
+        }
         emit(
             listOf(
                 "Query: $query \nResult: result1",
