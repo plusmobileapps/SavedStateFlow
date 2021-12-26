@@ -9,37 +9,47 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-//    private val _query = MutableStateFlow<String>("") // Will not persist process death
-    private val _query = SavedStateFlow(
+    //    private val _query = MutableStateFlow<String>("") // Will not persist process death
+    private val query = SavedStateFlow(
         savedStateHandle = savedStateHandle,
         key = "main-viewmodel-query-key",
-        initialValue = ""
+        defaultValue = ""
     )
-    val query: StateFlow<String> = _query.asStateFlow()
 
-    private val _newsArticles = MutableStateFlow(emptyList<String>())
-    val newsArticles: StateFlow<List<String>> = _newsArticles
-
-    private val _isLoading = MutableStateFlow(query.value.isNotBlank())
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _state = MutableStateFlow(
+        State(
+            isLoading = query.value.isNotBlank(),
+            query = query.value,
+            results = emptyList()
+        )
+    )
+    val state: StateFlow<State> get() = _state
 
     init {
         observeQuery()
     }
 
-    fun queryUpdated(query: String) {
-        _isLoading.value = true
-        this._query.value = query
+    fun updateQuery(query: String) {
+        _state.value = _state.value.copy(isLoading = true, query = query)
+        this.query.value = query
     }
 
     private fun observeQuery() {
         viewModelScope.launch {
-            query.flatMapLatest(NewsRepository::fetchQuery).collect {
-                _newsArticles.value = it
-                _isLoading.value = false
-            }
+            query.asStateFlow()
+                .flatMapLatest { query ->
+                    NewsRepository.fetchQuery(query)
+                }
+                .collect { results ->
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        results = results
+                    )
+                }
         }
     }
+
+    data class State(val isLoading: Boolean = false, val query: String, val results: List<String>)
 
 }
 
