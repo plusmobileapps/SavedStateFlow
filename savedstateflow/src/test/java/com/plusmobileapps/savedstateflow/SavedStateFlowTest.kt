@@ -1,10 +1,10 @@
 package com.plusmobileapps.savedstateflow
 
+import app.cash.turbine.test
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -18,7 +18,7 @@ class SavedStateFlowTest {
     fun `no saved value should default to initial value`() = runTest {
         val savedStateHandle: SavedStateHandleWrapper<String> = mockk {
             every { getValue(savedStateKey) } returns null
-            every { getFlow(savedStateKey) } returns flow {  }
+            every { getFlow(savedStateKey) } returns flow { }
         }
 
         val testMe = SavedStateFlowImpl<String>(
@@ -36,7 +36,7 @@ class SavedStateFlowTest {
         val savedValue = "some saved value"
         val savedStateHandle: SavedStateHandleWrapper<String> = mockk {
             every { getValue(savedStateKey) } returns savedValue
-            every { getFlow(savedStateKey) } returns flow {  }
+            every { getFlow(savedStateKey) } returns flow { }
         }
 
         val testMe =
@@ -50,7 +50,7 @@ class SavedStateFlowTest {
         val expected = "some new value"
         val savedStateHandle: SavedStateHandleWrapper<String> = mockk(relaxUnitFun = true) {
             every { getValue(savedStateKey) } returns null
-            every { getFlow(savedStateKey) } returns flow {  }
+            every { getFlow(savedStateKey) } returns flow { }
         }
         val testMe = SavedStateFlowImpl<String>(
             this,
@@ -64,27 +64,28 @@ class SavedStateFlowTest {
         verify { savedStateHandle.setValue(savedStateKey, expected) }
     }
 
-//    @Test
-//    fun `state flow gets new values from saved state handle`() = runTest {
-//        val savedStateHandle: SavedStateHandleWrapper<String> = mockk(relaxUnitFun = true) {
-//            every { getValue(savedStateKey) } returns null
-//            every { getFlow(savedStateKey) } returns flow {  }
-//        }
-//        val testMe = SavedStateFlowImpl<String>(
-//            TestScope(),
-//            savedStateHandle,
-//            savedStateKey,
-//            initialDefaultValue
-//        )
-//
-//        val newValue = "some new value"
-//
-//        testMe.asStateFlow().test {
-//            assertEquals(initialDefaultValue, awaitItem())
-//
-//            assertEquals(newValue, awaitItem())
-//
-//            cancelAndIgnoreRemainingEvents()
-//        }
-//    }
+    @Test
+    fun `state flow gets new values from saved state handle`() = runTest {
+        val expected = listOf("first value", "second value", "third value")
+        val savedStateHandle: SavedStateHandleWrapper<String> = mockk(relaxUnitFun = true) {
+            every { getValue(savedStateKey) } returns null
+            every { getFlow(savedStateKey) } returns flow {
+                expected.forEach { emit(it) }
+            }
+        }
+
+        SavedStateFlowImpl<String>(
+            this,
+            savedStateHandle,
+            savedStateKey,
+            initialDefaultValue
+        ).asStateFlow()
+            .test {
+                assertEquals(initialDefaultValue, awaitItem())
+                assertEquals(expected[0], awaitItem())
+                assertEquals(expected[1], awaitItem())
+                assertEquals(expected[2], awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
+    }
 }
