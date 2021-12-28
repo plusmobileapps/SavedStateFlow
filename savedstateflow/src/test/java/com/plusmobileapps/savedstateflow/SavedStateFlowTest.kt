@@ -1,52 +1,28 @@
 package com.plusmobileapps.savedstateflow
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 class SavedStateFlowTest {
 
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
-
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-
     private val savedStateKey = "some key"
     private val initialDefaultValue = "The initial default value when no value in saved state"
 
-    @Before
-    fun setUp() {
-        Dispatchers.setMain(mainThreadSurrogate)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset the main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
-    }
-
     @Test
-    fun `no saved value should default to initial value`() {
-        val savedStateHandle: SavedStateHandle = mockk {
-            every { get<String>(savedStateKey) } returns null
-            every { getLiveData<String>(savedStateKey) } returns MutableLiveData()
+    fun `no saved value should default to initial value`() = runTest {
+        val savedStateHandle: SavedStateHandleWrapper<String> = mockk {
+            every { getValue(savedStateKey) } returns null
+            every { getFlow(savedStateKey) } returns flow {  }
         }
 
         val testMe = SavedStateFlowImpl<String>(
-            TestScope(),
+            this,
             savedStateHandle,
             savedStateKey,
             initialDefaultValue
@@ -56,29 +32,28 @@ class SavedStateFlowTest {
     }
 
     @Test
-    fun `saved value exists and should be returned`() {
+    fun `saved value exists and should be returned`() = runTest {
         val savedValue = "some saved value"
-        val savedLiveData = MutableLiveData<String>()
-        val savedStateHandle: SavedStateHandle = mockk {
-            every { get<String>(savedStateKey) } returns savedValue
-            every { getLiveData<String>(savedStateKey) } returns savedLiveData
+        val savedStateHandle: SavedStateHandleWrapper<String> = mockk {
+            every { getValue(savedStateKey) } returns savedValue
+            every { getFlow(savedStateKey) } returns flow {  }
         }
 
         val testMe =
-            SavedStateFlowImpl(TestScope(), savedStateHandle, savedStateKey, initialDefaultValue)
+            SavedStateFlowImpl(this, savedStateHandle, savedStateKey, initialDefaultValue)
 
         assertEquals(savedValue, testMe.value)
     }
 
     @Test
-    fun `set value delegates to saved state handle`() {
+    fun `set value delegates to saved state handle`() = runTest {
         val expected = "some new value"
-        val savedStateHandle: SavedStateHandle = mockk(relaxUnitFun = true) {
-            every { get<String>(savedStateKey) } returns null
-            every { getLiveData<String>(savedStateKey) } returns MutableLiveData()
+        val savedStateHandle: SavedStateHandleWrapper<String> = mockk(relaxUnitFun = true) {
+            every { getValue(savedStateKey) } returns null
+            every { getFlow(savedStateKey) } returns flow {  }
         }
         val testMe = SavedStateFlowImpl<String>(
-            TestScope(),
+            this,
             savedStateHandle,
             savedStateKey,
             initialDefaultValue
@@ -86,7 +61,30 @@ class SavedStateFlowTest {
 
         testMe.value = expected
 
-        verify { savedStateHandle.set(savedStateKey, expected) }
+        verify { savedStateHandle.setValue(savedStateKey, expected) }
     }
 
+//    @Test
+//    fun `state flow gets new values from saved state handle`() = runTest {
+//        val savedStateHandle: SavedStateHandleWrapper<String> = mockk(relaxUnitFun = true) {
+//            every { getValue(savedStateKey) } returns null
+//            every { getFlow(savedStateKey) } returns flow {  }
+//        }
+//        val testMe = SavedStateFlowImpl<String>(
+//            TestScope(),
+//            savedStateHandle,
+//            savedStateKey,
+//            initialDefaultValue
+//        )
+//
+//        val newValue = "some new value"
+//
+//        testMe.asStateFlow().test {
+//            assertEquals(initialDefaultValue, awaitItem())
+//
+//            assertEquals(newValue, awaitItem())
+//
+//            cancelAndIgnoreRemainingEvents()
+//        }
+//    }
 }
