@@ -3,6 +3,12 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+ext {
+    PUBLISH_GROUP_ID = 'com.plusmobileapps'
+    PUBLISH_VERSION = '0.1'
+    PUBLISH_ARTIFACT_ID = 'saved-state-flow'
+}
+
 android {
     compileSdk 31
 
@@ -40,3 +46,5 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
     testImplementation 'app.cash.turbine:turbine:0.7.0'
 }
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
