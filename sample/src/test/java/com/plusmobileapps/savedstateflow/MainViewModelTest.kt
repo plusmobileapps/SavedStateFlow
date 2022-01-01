@@ -1,64 +1,65 @@
 package com.plusmobileapps.savedstateflow
 
 import app.cash.turbine.test
+import com.plusmobileapps.savedstateflow.MainViewModel.Companion.SAVED_STATE_QUERY_KEY
+import com.plusmobileapps.savedstateflow.MainViewModel.State
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MainViewModelTest {
 
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    @get:Rule
+    var coroutinesTestRule = TestCoroutinesRule()
 
-    lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MainViewModel
 
     private val savedStateHandle: SavedStateFlowHandle = mockk()
     private val newsDataSource: NewsDataSource = mockk()
-    private val savedStateFlow: SavedStateFlow<String> = TestSavedStateFlow<String>("")
 
-    @Before
-    fun setUp() {
+    private val results = listOf<String>("some value", "some second value")
+
+    private fun setUp(savedStateFlow: SavedStateFlow<String>) {
         every { newsDataSource.fetchQuery("") } returns flow {  }
-        every {
-            savedStateHandle.getSavedStateFlow(
-                any(),
-                MainViewModel.SAVED_STATE_QUERY_KEY,
-                ""
-            )
-        } returns savedStateFlow
-        Dispatchers.setMain(mainThreadSurrogate)
+        every { savedStateHandle.getSavedStateFlow(any(), SAVED_STATE_QUERY_KEY, "") } returns savedStateFlow
+
         viewModel = MainViewModel(savedStateHandle, newsDataSource)
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset the main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+    @Test
+    fun `initial query value exists, should start in loading state and fetch results`() = runBlocking {
+        val cachedQuery = "some cached query"
+        val savedStateFlow = TestSavedStateFlow<String>("", cachedQuery)
+        every { newsDataSource.fetchQuery(cachedQuery) } returns flowOf(results)
+
+        setUp(savedStateFlow)
+
+        viewModel.state.test {
+            assertEquals(State(true, cachedQuery, emptyList()), awaitItem())
+            assertEquals(State(false, cachedQuery, results), awaitItem())
+        }
     }
 
     @Test
-    fun `saved state flow returns cache value and fetches results`() = runBlocking {
+    fun `update query should trigger a new fetch to the repository for results and update state`() = runBlocking {
+        val savedStateFlow = TestSavedStateFlow<String>("")
         val newQuery = "some new query"
-        val results = listOf<String>("some value", "some second value")
-        val expectedState = MainViewModel.State(false, newQuery, results)
         every { newsDataSource.fetchQuery(newQuery) } returns flowOf(results)
+
+        setUp(savedStateFlow)
 
         viewModel.state.test {
             viewModel.updateQuery(newQuery)
-            assertEquals(MainViewModel.State(false, "", emptyList()), awaitItem())
-            assertEquals(MainViewModel.State(true, newQuery, emptyList()), awaitItem())
-            assertEquals(expectedState, awaitItem())
+            assertEquals(State(false, "", emptyList()), awaitItem())
+            assertEquals(State(true, newQuery, emptyList()), awaitItem())
+            assertEquals(State(false, newQuery, results), awaitItem())
         }
     }
 }
