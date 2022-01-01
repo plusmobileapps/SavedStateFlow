@@ -6,8 +6,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.savedstate.SavedStateRegistryOwner
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class MainViewModelFactory(
@@ -19,22 +21,21 @@ class MainViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle
     ): T {
-        return MainViewModel(handle, NewsRepository) as T
+        return MainViewModel(handle.toSavedStateFlowHandle(), NewsRepository) as T
     }
 }
 
-class MainViewModel(savedStateHandle: SavedStateHandle, private val newsDataSource: NewsDataSource) : ViewModel() {
+class MainViewModel(
+    savedStateFlowHandle: SavedStateFlowHandle,
+    private val newsDataSource: NewsDataSource
+) : ViewModel() {
 
     companion object {
         const val SAVED_STATE_QUERY_KEY = "main-viewmodel-query-key"
     }
 
-    //    private val query = MutableStateFlow<String>("") // Will not persist process death
-    private val query = SavedStateFlow(
-        savedStateHandle = savedStateHandle,
-        key = SAVED_STATE_QUERY_KEY,
-        defaultValue = ""
-    )
+    private val query: SavedStateFlow<String> =
+        savedStateFlowHandle.getSavedStateFlow(viewModelScope, SAVED_STATE_QUERY_KEY, "")
 
     private val _state = MutableStateFlow(
         State(
