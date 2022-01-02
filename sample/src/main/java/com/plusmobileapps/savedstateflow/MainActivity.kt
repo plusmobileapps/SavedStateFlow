@@ -21,7 +21,9 @@ import com.plusmobileapps.savedstateflow.ui.theme.SavedStateFlowTheme
 import kotlinx.coroutines.flow.StateFlow
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

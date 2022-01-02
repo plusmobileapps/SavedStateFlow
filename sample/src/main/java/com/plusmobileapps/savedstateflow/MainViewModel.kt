@@ -1,20 +1,41 @@
 package com.plusmobileapps.savedstateflow
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import androidx.savedstate.SavedStateRegistryOwner
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class MainViewModelFactory(
+    owner: SavedStateRegistryOwner,
+    defaultArgs: Bundle? = null
+) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+    override fun <T : ViewModel?> create(
+        key: String,
+        modelClass: Class<T>,
+        handle: SavedStateHandle
+    ): T {
+        return MainViewModel(handle.toSavedStateFlowHandle(), NewsRepository) as T
+    }
+}
 
-    //    private val query = MutableStateFlow<String>("") // Will not persist process death
-    private val query = SavedStateFlow(
-        savedStateHandle = savedStateHandle,
-        key = "main-viewmodel-query-key",
-        defaultValue = ""
-    )
+class MainViewModel(
+    savedStateFlowHandle: SavedStateFlowHandle,
+    private val newsDataSource: NewsDataSource
+) : ViewModel() {
+
+    companion object {
+        const val SAVED_STATE_QUERY_KEY = "main-viewmodel-query-key"
+    }
+
+    private val query: SavedStateFlow<String> =
+        savedStateFlowHandle.getSavedStateFlow(viewModelScope, SAVED_STATE_QUERY_KEY, "")
 
     private val _state = MutableStateFlow(
         State(
@@ -38,7 +59,7 @@ class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch {
             query.asStateFlow()
                 .flatMapLatest { query ->
-                    NewsRepository.fetchQuery(query)
+                    newsDataSource.fetchQuery(query)
                 }
                 .collect { results ->
                     _state.value = _state.value.copy(
@@ -51,21 +72,4 @@ class MainViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     data class State(val isLoading: Boolean = false, val query: String, val results: List<String>)
 
-}
-
-object NewsRepository {
-    fun fetchQuery(query: String): Flow<List<String>> = flow {
-        delay(2000L)
-        if (query.isEmpty()) {
-            emit(emptyList())
-            return@flow
-        }
-        emit(
-            listOf(
-                "Query: $query \nResult: result1",
-                "Query: $query \nResult: result2",
-                "Query: $query \nResult: result3"
-            )
-        )
-    }
 }

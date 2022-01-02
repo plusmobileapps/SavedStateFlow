@@ -6,7 +6,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = "$publish_group_id"
     PUBLISH_VERSION = "$publish_version"
-    PUBLISH_ARTIFACT_ID = 'saved-state-flow'
+    PUBLISH_ARTIFACT_ID = 'saved-state-flow-test'
 }
 
 android {
@@ -36,9 +36,9 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_ktx_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_ktx_version"
+
+    implementation(project(":savedstateflow"))
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "io.mockk:mockk:$mockk_version"

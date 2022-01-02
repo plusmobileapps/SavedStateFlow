@@ -29,16 +29,26 @@ interface SavedStateFlow<T> {
  * @param key
  * @param defaultValue
  */
-fun <T : Any> ViewModel.SavedStateFlow(savedStateHandle: SavedStateHandle, key: String, defaultValue: T): SavedStateFlow<T> =
-    SavedStateFlowImpl(viewModelScope, SavedStateHandleWrapperImpl(savedStateHandle), key, defaultValue)
+fun <T : Any> ViewModel.SavedStateFlow(
+    savedStateHandle: SavedStateHandle,
+    key: String,
+    defaultValue: T
+): SavedStateFlow<T> =
+    SavedStateFlowImpl(
+        viewModelScope,
+        SavedStateHandleWrapperImpl(savedStateHandle),
+        key,
+        defaultValue
+    )
 
-internal interface SavedStateHandleWrapper <T> {
+internal interface SavedStateHandleWrapper<T> {
     fun getValue(key: String): T?
     fun setValue(key: String, value: T)
     fun getFlow(key: String): Flow<T>
 }
 
-internal class SavedStateHandleWrapperImpl<T>(private val savedState: SavedStateHandle) : SavedStateHandleWrapper<T> {
+internal class SavedStateHandleWrapperImpl<T>(private val savedState: SavedStateHandle) :
+    SavedStateHandleWrapper<T> {
     override fun getValue(key: String): T? = savedState.get(key)
     override fun setValue(key: String, value: T) = savedState.set(key, value)
     override fun getFlow(key: String): Flow<T> = savedState.getLiveData<T>(key).asFlow()
