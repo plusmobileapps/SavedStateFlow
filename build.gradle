@@ -1,5 +1,12 @@
 buildscript {
     ext {
+        publish_group_id = 'com.plusmobileapps'
+        publish_version = '0.3'
+
+        compile_sdk = 31
+        min_sdk = 21
+        target_sdk = 31
+
         kotlin_version = '1.5.31'
         compose_version = '1.0.5'
         appcompat_version = '1.4.0'
