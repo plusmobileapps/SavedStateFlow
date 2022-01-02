@@ -1,6 +1,6 @@
 # SavedStateFlow
 
-A Kotlin [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow) wrapper around [SavedStateHandle.getLiveData()](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
+`SavedStateFlow` is a Kotlin [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow) wrapper around [SavedStateHandle.getLiveData()](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
 
 * [SavedStateFlow.kt](https://github.com/plusmobileapps/SavedStateFlow/blob/main/savedstateflow/src/main/java/com/plusmobileapps/savedstateflow/SavedStateFlow.kt) - all the code for this simple library
 * [ViewModel example](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt) - sample usage of `SavedStateFlow` in a `ViewModel`
@@ -15,12 +15,14 @@ A Kotlin [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sha
 
 ```groovy
 implementation "com.plusmobileapps:saved-state-flow:<version>"
+testImplementation "com.plusmobileapps:saved-state-flow-test:<version>"
 ```
 
 ### Kotlin Gradle
 
 ```kotlin
 implementation("com.plusmobileapps:saved-state-flow:<version>")
+testImplementation("com.plusmobileapps:saved-state-flow-test:<version>")
 ```
 
 ## Usage

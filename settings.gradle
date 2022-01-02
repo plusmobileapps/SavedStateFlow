@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Saved State Flow"
-include ':sample'
+include ':sample:manual-di'
+include ':sample:hilt-di'
 include ':savedstateflow'
 include ':savedstateflow-test'

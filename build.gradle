@@ -1,7 +1,7 @@
 buildscript {
     ext {
         publish_group_id = 'com.plusmobileapps'
-        publish_version = '0.3-alpha01'
+        publish_version = '0.3'
 
         compile_sdk = 31
         min_sdk = 21
@@ -15,12 +15,18 @@ buildscript {
         lifecycle_version = '2.4.0'
         livedata_ktx_version = '2.4.0'
         viewmodel_ktx_version = '2.4.0'
+        hilt_version = '2.38.1'
 
         mockk_version = '1.12.1'
         junit_version = '4.13.2'
         coroutines_version = '1.6.0'
         turbine_version = '0.7.0'
     }
+
+    dependencies {
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+    }
+
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id 'com.android.application' version '7.0.0' apply false

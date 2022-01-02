@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.plusmobileapps.savedstateflow.ui.theme.SavedStateFlowTheme
-import kotlinx.coroutines.flow.StateFlow
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
