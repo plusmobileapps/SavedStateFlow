@@ -1,0 +1,24 @@
+site_name: Saved State Flow
+repo_url: https://github.com/plusmobileapps/SavedStateFlow
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+
+nav: 
+  - Overview: index.md
+  - Setup: setup.md
+  - Samples:
+    - Manual DI: manual-di.md
+    - Hilt: hilt-di.md
+  - Testing: testing.md
