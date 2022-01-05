@@ -1,11 +1,7 @@
 package com.plusmobileapps.savedstateflow
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -22,46 +18,14 @@ interface SavedStateFlow<T> {
 
 }
 
-/**
- * Builder function for creating a [SavedStateFlow]
- *
- * @param savedStateHandle
- * @param key
- * @param defaultValue
- */
-fun <T : Any> ViewModel.SavedStateFlow(
-    savedStateHandle: SavedStateHandle,
-    key: String,
-    defaultValue: T
-): SavedStateFlow<T> =
-    SavedStateFlowImpl(
-        viewModelScope,
-        SavedStateHandleWrapperImpl(savedStateHandle),
-        key,
-        defaultValue
-    )
-
-internal interface SavedStateHandleWrapper<T> {
-    fun getValue(key: String): T?
-    fun setValue(key: String, value: T)
-    fun getFlow(key: String): Flow<T>
-}
-
-internal class SavedStateHandleWrapperImpl<T>(private val savedState: SavedStateHandle) :
-    SavedStateHandleWrapper<T> {
-    override fun getValue(key: String): T? = savedState.get(key)
-    override fun setValue(key: String, value: T) = savedState.set(key, value)
-    override fun getFlow(key: String): Flow<T> = savedState.getLiveData<T>(key).asFlow()
-}
-
 internal class SavedStateFlowImpl<T>(
-    private val scope: CoroutineScope,
-    private val savedStateHandle: SavedStateHandleWrapper<T>,
+    private val viewModelScope: CoroutineScope,
+    private val savedStateHandle: SavedStateFlowHandle,
     private val key: String,
     defaultValue: T
 ) : SavedStateFlow<T> {
     private val _state: MutableStateFlow<T> =
-        MutableStateFlow(savedStateHandle.getValue(key) ?: defaultValue)
+        MutableStateFlow(savedStateHandle.get<T>(key) ?: defaultValue)
 
     init {
         observeSavedState()
@@ -70,15 +34,15 @@ internal class SavedStateFlowImpl<T>(
     override var value: T
         get() = _state.value
         set(value) {
-            savedStateHandle.setValue(key, value)
+            savedStateHandle[key] = value
         }
 
     override fun asStateFlow(): StateFlow<T> = _state
 
     private fun observeSavedState() {
-        scope.launch {
-            savedStateHandle.getFlow(key).collect { value ->
-                _state.value = value
+        viewModelScope.launch {
+           savedStateHandle.getFlow<T>(key).collect {
+                _state.value = it
             }
         }
     }
