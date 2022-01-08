@@ -12,6 +12,7 @@ buildscript {
         appcompat_version = '1.4.0'
         core_ktx_version = '1.7.0'
         compose_activity_version = '1.4.0'
+        fragment_ktx_version = '1.4.0'
         lifecycle_version = '2.4.0'
         livedata_ktx_version = '2.4.0'
         viewmodel_ktx_version = '2.4.0'

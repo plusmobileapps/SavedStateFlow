@@ -2,9 +2,9 @@
 
 [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) is a dependency injection framework built on top of [Dagger](https://dagger.dev/) that helps reduce a lot of boiler plate when injecting dependencies. Hilt can also help reduce the boiler plate when using `SavedStateFlow` by scoping an instance of `SavedStateFlowHandle` to any `ViewModel` that requests it. 
 
-## ViewModel 
+## Hilt ViewModel  
 
-A paired down version of the `ViewModel` for this sample is shown below: 
+The `saved-state-flow-hilt` artifact provides an instance of `SavedStateFlowHandle` to the `ViewModelComponent` out of the box, so it can be declared in any `ViewModel` constructor like so. 
 
 ```kotlin
 @HiltViewModel
@@ -38,31 +38,9 @@ class MainViewModel @Inject constructor(
 }
 ```
 
-The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt). 
+The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt).   
 
-
-## Scoping SavedStateFlowHandle to ViewModel's
-
-Hilt provides the ability of scoping dependencies, so to ensure any `ViewModel` can get a reference to a `SavedStateFlow` the [ViewModel scope](https://dagger.dev/hilt/view-model.html) can be used to scope a `SavedStateFlowHandle` to every `ViewModel`. Considering the following from the documentation: 
-
-> SavedStateHandle is a default binding available to all Hilt View Models. Only dependencies from the ViewModelComponent and its parent components can be provided into the ViewModel
-
-The extension function `SavedStateHandle.toSavedStateFlowHandle()` can be used in a module that is installed in the `ViewModelComponent`. 
-
-```kotlin
-@InstallIn(ViewModelComponent::class)
-@Module
-object SavedStateFlowHandleModule {
-
-    @Provides
-    @ViewModelScoped
-    fun providesSavedStateFlowHandle(savedStateHandle: SavedStateHandle): SavedStateFlowHandle =
-        savedStateHandle.toSavedStateFlowHandle()
-
-}
-```
-
-## Grabbing a Reference to ViewModel
+### Grabbing a Reference to @HiltViewModel
 
 Finally grab a reference to the `ViewModel` using the `by viewmodels { }` delegation function. 
 
@@ -72,6 +50,41 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+}
+```
+
+## Assisted Injection 
+
+When using Hilt, it's possible that the `@HiltViewModel` annotation cannot be used when a value needs to be injected into the constructor at runtime. For that, there are a couple of extension methods provided to help inject a `SavedStateFlowHandle` when using Hilt's assisted injection from a `FragmentActivity` or `Fragment`. 
+
+### Assisted Injected ViewModel
+
+```kotlin
+class MyAssistedViewModel @AssistedInject constructor(
+    @Assisted savedStateFlowHandle: SavedStateFlowHandle,
+    @Assisted id: String
+) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateFlowHandle: SavedStateFlowHandle, id: String): MyAssistedViewModel
+    }
+}
+```
+
+### Grab a reference to an Assisted ViewModel
+
+Then in a `Fragment` or a `FragmentActivity`, the `by assistedViewModel` method may be used to get a reference to a assisted injected `ViewModel` as this method provides you an instance of a `SavedStateFlowHandle`. There is also a method for fragments to get a `ViewModel` scoped to its `FragmentActivity` if using the `by assistedActivityViewModel {}` method. 
+
+```kotlin
+@AndroidEntryPoint
+class AssistedFragment : Fragment() {
+    @Inject
+    lateinit var factory: MyAssistedViewModel.Factory
+
+    private val viewModel: MyAssistedViewModel by assistedViewModel { savedStateFlowHandle ->
+        factory.create(savedStateFlowHandle, arguments?.getString("some-argument-key")!!)
+    }
 }
 ```
 
