@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
 }
 ```
 
-The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt).   
+The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/main/java/com/plusmobileapps/savedstateflowhilt/MainViewModel.kt).   
 
 ### Grabbing a Reference to @HiltViewModel
 

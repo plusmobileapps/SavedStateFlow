@@ -38,7 +38,7 @@ class MainViewModel(
 }
 ```
 
-The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/manual-di/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt). 
+The full version of this `ViewModel` can be found [here](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/manual-di/src/main/java/com/plusmobileapps/savedstateflowmanual/MainViewModel.kt). 
 
 ## ViewModel Factory 
 
