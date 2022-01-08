@@ -44,13 +44,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_ktx_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_ktx_version"
-
-    testImplementation "junit:junit:$junit_version"
-    testImplementation "io.mockk:mockk:$mockk_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    testImplementation "app.cash.turbine:turbine:$turbine_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
