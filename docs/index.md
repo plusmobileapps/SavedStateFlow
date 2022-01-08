@@ -24,8 +24,8 @@ val savedStateFlowHandle: SavedStateFlowHandle =
 !!! info 
     Please refer to the samples to see how to get a reference to `SavedStateHandle`.
     
-    * [manual injection](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/manual-di/src/main/java/com/plusmobileapps/savedstateflow/MainViewModel.kt#L15) using the `AbstractSavedStateViewModelFactory`
-    * [Hilt injection](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/main/java/com/plusmobileapps/savedstateflow/Modules.kt#L18) - scopes `SavedStateFlowHandle` so any `ViewModel` can get a reference. 
+    * [manual injection](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/manual-di/src/main/java/com/plusmobileapps/savedstateflowmanual/MainViewModel.kt#L27) using the `AbstractSavedStateViewModelFactory`
+    * The `saved-state-flow-hilt` artifact automatically scopes `SavedStateFlowHandle` to `ViewModel`'s so there is no need to get a reference to a `SavedStateHandle`. 
 
 Once a `SavedStateFlowHandle` is created, inject it in a `ViewModel` and retrieve a `SavedStateFlow`. 
 

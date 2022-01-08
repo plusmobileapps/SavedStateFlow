@@ -27,7 +27,7 @@ class SomeTest {
 
 ### Test Setup 
 
-Both samples for manual DI and Hilt have the same constructor, therefore have the same test structure. So when setting up the test, a [`TestCoroutineTestRule`](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/test/java/com/plusmobileapps/savedstateflow/TestCoroutinesRule.kt) is needed to override the main dispatcher being used by the `viewModelScope`. Then the following setup will be used to setup each of the following tests one could write using `TestSavedStateFlow`. 
+Both samples for manual DI and Hilt have the same constructor, therefore have the same test structure. So when setting up the test, a [`TestCoroutineTestRule`](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/hilt-di/src/test/java/com/plusmobileapps/savedstateflowhilt/TestCoroutineRule.kt) is needed to override the main dispatcher being used by the `viewModelScope`. Then the following setup will be used to setup each of the following tests one could write using `TestSavedStateFlow`. 
 
 ```kotlin
 class MainViewModelTest {
@@ -108,7 +108,7 @@ fun `update query should trigger a new fetch to the repository for results and u
 ## Resources 
 
 * [`TestSavedStateFlow` source code](https://github.com/plusmobileapps/SavedStateFlow/blob/main/savedstateflow-test/src/main/java/com/plusmobileapps/savedstateflowtest/TestSavedStateFlow.kt)
-* [Hilt sample test folder](https://github.com/plusmobileapps/SavedStateFlow/tree/main/sample/hilt-di/src/test/java/com/plusmobileapps/savedstateflow)
-* [Manual DI sample test folder](https://github.com/plusmobileapps/SavedStateFlow/blob/main/sample/manual-di/src/test/java/com/plusmobileapps/savedstateflow)
+* [Hilt sample test folder](https://github.com/plusmobileapps/SavedStateFlow/tree/main/sample/hilt-di/src/test/java/com/plusmobileapps/savedstateflowhilt)
+* [Manual DI sample test folder](https://github.com/plusmobileapps/SavedStateFlow/tree/main/sample/manual-di/src/test/java/com/plusmobileapps/savedstateflowmanual)
 * [Turbine](https://github.com/cashapp/turbine) - A small testing library for kotlinx.coroutines Flow
 * [Mockk](https://mockk.io/) - Kotlin mocking library
