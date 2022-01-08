@@ -7,8 +7,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = "$publish_group_id"
-//    PUBLISH_VERSION = "$publish_version"
-    PUBLISH_VERSION = "0.1-alpha01"
+    PUBLISH_VERSION = "$publish_version"
     PUBLISH_ARTIFACT_ID = 'saved-state-flow-hilt'
 }
 
