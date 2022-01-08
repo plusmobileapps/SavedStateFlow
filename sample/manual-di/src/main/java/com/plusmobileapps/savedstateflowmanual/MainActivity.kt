@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowmanual
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,14 +17,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.plusmobileapps.savedstateflow.ui.theme.SavedStateFlowTheme
-import dagger.hilt.android.AndroidEntryPoint
+import com.plusmobileapps.savedstateflowmanual.ui.theme.SavedStateFlowTheme
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val viewModel: MainViewModel by viewModels()
-
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

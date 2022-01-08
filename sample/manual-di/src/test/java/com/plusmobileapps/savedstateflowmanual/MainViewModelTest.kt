@@ -1,8 +1,10 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowmanual
 
 import app.cash.turbine.test
-import com.plusmobileapps.savedstateflow.MainViewModel.Companion.SAVED_STATE_QUERY_KEY
-import com.plusmobileapps.savedstateflow.MainViewModel.State
+import com.plusmobileapps.savedstateflow.SavedStateFlow
+import com.plusmobileapps.savedstateflow.SavedStateFlowHandle
+import com.plusmobileapps.savedstateflowmanual.MainViewModel.Companion.SAVED_STATE_QUERY_KEY
+import com.plusmobileapps.savedstateflowmanual.MainViewModel.State
 import com.plusmobileapps.savedstateflowtest.TestSavedStateFlow
 import io.mockk.every
 import io.mockk.mockk

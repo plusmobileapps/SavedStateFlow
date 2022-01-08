@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowmanual
 
 import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
@@ -6,6 +6,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.savedstate.SavedStateRegistryOwner
+import com.plusmobileapps.savedstateflow.SavedStateFlow
+import com.plusmobileapps.savedstateflow.SavedStateFlowHandle
+import com.plusmobileapps.savedstateflow.toSavedStateFlowHandle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -60,8 +63,7 @@ class MainViewModel(
             query.asStateFlow()
                 .flatMapLatest { query ->
                     newsDataSource.fetchQuery(query)
-                }
-                .collect { results ->
+                }.collect { results ->
                     _state.value = _state.value.copy(
                         isLoading = false,
                         results = results

@@ -1,7 +1,9 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowhilt
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plusmobileapps.savedstateflow.SavedStateFlow
+import com.plusmobileapps.savedstateflow.SavedStateFlowHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

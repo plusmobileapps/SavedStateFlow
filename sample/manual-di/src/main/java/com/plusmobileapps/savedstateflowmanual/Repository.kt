@@ -1,17 +1,14 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowmanual
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 interface NewsDataSource {
     fun fetchQuery(query: String): Flow<List<String>>
 }
 
-@Singleton
-class NewsRepository @Inject constructor() : NewsDataSource {
+object NewsRepository : NewsDataSource {
     override fun fetchQuery(query: String): Flow<List<String>> = flow {
         delay(2000L)
         if (query.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowhilt
 
 import dagger.Binds
 import dagger.Module

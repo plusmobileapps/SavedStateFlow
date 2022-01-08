@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow.ui.theme
+package com.plusmobileapps.savedstateflowmanual.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow.ui.theme
+package com.plusmobileapps.savedstateflowhilt.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

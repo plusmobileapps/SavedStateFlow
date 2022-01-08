@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow.assisted
+package com.plusmobileapps.savedstateflowhilt.assisted
 
 import androidx.lifecycle.ViewModel
 import com.plusmobileapps.savedstateflow.SavedStateFlowHandle

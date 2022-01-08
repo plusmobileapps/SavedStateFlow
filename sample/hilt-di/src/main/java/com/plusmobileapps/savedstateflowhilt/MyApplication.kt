@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowhilt
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -1,4 +1,4 @@
-package com.plusmobileapps.savedstateflow
+package com.plusmobileapps.savedstateflowhilt
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
